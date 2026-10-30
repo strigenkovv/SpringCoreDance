@@ -3,6 +3,8 @@ package be.vdab.dance.festivals;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.Scanner;
+
 @Component
 public class MyRunner implements CommandLineRunner {
     private final FestivalService festivalService;
@@ -13,7 +15,9 @@ public class MyRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        festivalService.findUitverkocht()
-                .forEach(festival -> System.out.println(festival.getNaam()));
+        var scanner = new Scanner(System.in);
+        System.out.print("Geef het id van het te annuleren festival: ");
+        var id = scanner.nextLong();
+        festivalService.annuleer(id);
     }
 }

@@ -5,7 +5,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class FestivalRepository {
@@ -17,7 +19,7 @@ public class FestivalRepository {
 
     public List<Festival> findAll() {
         var sql = """
-                select id, naam, ticketsBeschikbaar
+                select id, naam, ticketsBeschikbaar, reclameBudget
                 from festivals
                 order by naam
                 """;
@@ -28,7 +30,7 @@ public class FestivalRepository {
 
     public List<Festival> findUitverkocht() {
         var sql = """
-                select id, naam, ticketsBeschikbaar
+                select id, naam, ticketsBeschikbaar, reclameBudget
                 from festivals
                 where ticketsBeschikbaar = 0
                 order by naam
@@ -36,6 +38,40 @@ public class FestivalRepository {
         return jdbcClient.sql(sql)
                 .query(Festival.class)
                 .list();
+    }
+
+    public Optional<Festival> findAndLockById(long id) {
+        var sql = """
+                select id, naam, ticketsBeschikbaar, reclameBudget
+                from festivals
+                where id = ?
+                for update
+                """;
+        return jdbcClient.sql(sql)
+                .param(id)
+                .query(Festival.class)
+                .optional();
+    }
+
+    public long findAantal() {
+        var sql = """
+                select count(*)
+                from festivals
+                """;
+        return jdbcClient.sql(sql)
+                .query(Long.class)
+                .single();
+    }
+
+    public void verhoogReclameBudget(BigDecimal bedrag, long uitgeslotenId) {
+        var sql = """
+                update festivals
+                set reclameBudget = reclameBudget + ?
+                where id <> ?
+                """;
+        jdbcClient.sql(sql)
+                .params(bedrag, uitgeslotenId)
+                .update();
     }
 
     public void delete(long id) {
@@ -50,12 +86,12 @@ public class FestivalRepository {
 
     public long create(Festival festival) {
         var sql = """
-                insert into festivals(naam, ticketsBeschikbaar)
-                values (?, ?)
+                insert into festivals(naam, ticketsBeschikbaar, reclameBudget)
+                values (?, ?, ?)
                 """;
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcClient.sql(sql)
-                .params(festival.getNaam(), festival.getTicketsBeschikbaar())
+                .params(festival.getNaam(), festival.getTicketsBeschikbaar(), festival.getReclameBudget())
                 .update(keyHolder);
         return keyHolder.getKey().longValue();
     }

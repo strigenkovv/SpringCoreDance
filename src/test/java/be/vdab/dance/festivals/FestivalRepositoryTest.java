@@ -9,6 +9,8 @@ import org.springframework.test.context.jdbc.Sql;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTableWhere;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.math.BigDecimal;
+
 @JdbcTest
 @Import(FestivalRepository.class)
 @Sql("/festivals.sql")
@@ -48,8 +50,19 @@ class FestivalRepositoryTest {
     }
 
     @Test
+    void findAndLockByIdGeeftEenFestival() {
+        var id = idVanTestFestival();
+
+        assertThat(festivalRepository.findAndLockById(id))
+                .isPresent()
+                .get()
+                .extracting(Festival::getId)
+                .isEqualTo(id);
+    }
+
+    @Test
     void createMaaktEenFestivalAan() {
-        var id = festivalRepository.create(new Festival(0, "Graspop", 25));
+        var id = festivalRepository.create(new Festival(0, "Graspop", 25, BigDecimal.valueOf(3000)));
         assertThat(id).isPositive();
         assertThat(countRowsInTableWhere(jdbcClient, FESTIVALS_TABLE, "id=" + id)).isOne();
     }
