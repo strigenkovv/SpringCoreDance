@@ -34,6 +34,8 @@ class BoekingServiceUnitTest {
 
         assertThat(boekingService.create(boeking)).isEqualTo(42L);
 
+        // verify controleert of de juiste methods van de mock repositories
+        // werden opgeroepen. Dit is een extra controle naast assertThat.
         verify(festivalRepository).verlaagTicketsBeschikbaar(festival.getId(), 3);
         verify(boekingRepository).create(boeking);
     }
@@ -48,6 +50,8 @@ class BoekingServiceUnitTest {
         assertThatThrownBy(() -> boekingService.create(boeking))
                 .isInstanceOf(IllegalArgumentException.class);
 
+        // never controleert dat deze methods niet werden opgeroepen
+        // wanneer het aantal tickets onvoldoende is.
         verify(festivalRepository, never())
                 .verlaagTicketsBeschikbaar(festival.getId(), 3);
         verify(boekingRepository, never()).create(boeking);
