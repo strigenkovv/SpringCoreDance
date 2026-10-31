@@ -74,6 +74,17 @@ public class FestivalRepository {
                 .update();
     }
 
+    public void verlaagTicketsBeschikbaar(long festivalId, int aantalTickets) {
+        var sql = """
+                update festivals
+                set ticketsBeschikbaar = ticketsBeschikbaar - ?
+                where id = ?
+                """;
+        jdbcClient.sql(sql)
+                .params(aantalTickets, festivalId)
+                .update();
+    }
+
     public void delete(long id) {
         var sql = """
                 delete from festivals
