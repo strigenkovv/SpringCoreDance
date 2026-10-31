@@ -15,7 +15,7 @@ public class BoekingService {
         this.boekingRepository = boekingRepository;
     }
 
-    public long boek(Boeking boeking) {
+    public long create(Boeking boeking) {
         var festival = festivalRepository.findAndLockById(boeking.getFestivalId())
                 .orElseThrow();
         if (boeking.getAantalTickets() > festival.getTicketsBeschikbaar()) {

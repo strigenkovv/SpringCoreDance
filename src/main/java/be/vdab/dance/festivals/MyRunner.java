@@ -32,7 +32,7 @@ public class MyRunner implements CommandLineRunner {
         var festivalId = scanner.nextLong();
 
         try {
-            boekingService.boek(new Boeking(0, naam, aantalTickets, festivalId));
+            boekingService.create(new Boeking(0, naam, aantalTickets, festivalId));
             System.out.println("Boeking aangemaakt.");
         } catch (IllegalArgumentException ex) {
             System.out.println(ex.getMessage());

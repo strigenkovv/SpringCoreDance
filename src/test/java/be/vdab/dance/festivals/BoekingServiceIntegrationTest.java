@@ -13,23 +13,23 @@ import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTableWhere;
 @JdbcTest
 @Import({FestivalRepository.class, BoekingRepository.class, BoekingService.class})
 @Sql("/festivals.sql")
-class BoekingServiceTest {
+class BoekingServiceIntegrationTest {
     private static final String BOEKINGEN_TABLE = "boekingen";
 
     private final BoekingService boekingService;
     private final JdbcClient jdbcClient;
 
-    BoekingServiceTest(BoekingService boekingService, JdbcClient jdbcClient) {
+    BoekingServiceIntegrationTest(BoekingService boekingService, JdbcClient jdbcClient) {
         this.boekingService = boekingService;
         this.jdbcClient = jdbcClient;
     }
 
     @Test
-    void boekVerlaagtTicketsEnVoegtEenBoekingToe() {
+    void createMaaktEenBoekingAan() {
         var festivalId = idVanFestival("Rock Werchter");
         var boeking = new Boeking(0, "Test Boeking", 3, festivalId);
 
-        var boekingId = boekingService.boek(boeking);
+        var boekingId = boekingService.create(boeking);
 
         assertThat(boekingId).isPositive();
         assertThat(ticketsVanFestival(festivalId)).isEqualTo(97);
@@ -38,11 +38,11 @@ class BoekingServiceTest {
     }
 
     @Test
-    void boekMetTeVeelTicketsGeeftEenFout() {
+    void createMetTeVeelTicketsGeeftEenFout() {
         var festivalId = idVanFestival("Rock Werchter");
         var boeking = new Boeking(0, "Test Mislukt", 101, festivalId);
 
-        assertThatThrownBy(() -> boekingService.boek(boeking))
+        assertThatThrownBy(() -> boekingService.create(boeking))
                 .isInstanceOf(IllegalArgumentException.class);
         assertThat(ticketsVanFestival(festivalId)).isEqualTo(100);
         assertThat(countRowsInTableWhere(
