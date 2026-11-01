@@ -5,6 +5,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class BoekingRepository {
     private final JdbcClient jdbcClient;
@@ -23,5 +25,17 @@ public class BoekingRepository {
                 .params(boeking.getNaam(), boeking.getAantalTickets(), boeking.getFestivalId())
                 .update(keyHolder);
         return keyHolder.getKey().longValue();
+    }
+
+    public List<BoekingOverzicht> findBoekingOverzicht() {
+        var sql = """
+                select b.id as boekingId, b.naam, f.naam as festivalNaam, b.aantalTickets
+                from boekingen b
+                join festivals f on f.id = b.festivalId
+                order by b.id
+                """;
+        return jdbcClient.sql(sql)
+                .query(BoekingOverzicht.class)
+                .list();
     }
 }

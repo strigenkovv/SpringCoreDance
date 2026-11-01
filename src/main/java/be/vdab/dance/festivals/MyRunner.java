@@ -24,12 +24,21 @@ public class MyRunner implements CommandLineRunner {
         festivalService.annuleer(id);
         */
 
+        maakBoeking(scanner);
+        System.out.print("Boekingsoverzicht tonen? (j/n): ");
+        if (scanner.nextLine().equalsIgnoreCase("j")) {
+            toonBoekingOverzicht();
+        }
+    }
+
+    private void maakBoeking(Scanner scanner) {
         System.out.print("Geef je naam: ");
         var naam = scanner.nextLine();
         System.out.print("Geef het aantal tickets: ");
         var aantalTickets = scanner.nextInt();
         System.out.print("Geef het id van het festival: ");
         var festivalId = scanner.nextLong();
+        scanner.nextLine();
 
         try {
             boekingService.create(new Boeking(0, naam, aantalTickets, festivalId));
@@ -37,5 +46,15 @@ public class MyRunner implements CommandLineRunner {
         } catch (IllegalArgumentException ex) {
             System.out.println(ex.getMessage());
         }
+    }
+
+    private void toonBoekingOverzicht() {
+        System.out.println("Overzicht van de boekingen:");
+        boekingService.findBoekingOverzicht()
+                .forEach(boeking -> System.out.println(
+                        boeking.boekingId() + ": "
+                                + boeking.naam() + ": "
+                                + boeking.festivalNaam() + ": "
+                                + boeking.aantalTickets()));
     }
 }

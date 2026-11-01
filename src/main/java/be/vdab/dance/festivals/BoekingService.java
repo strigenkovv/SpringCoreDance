@@ -3,6 +3,8 @@ package be.vdab.dance.festivals;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @Transactional
 public class BoekingService {
@@ -24,5 +26,9 @@ public class BoekingService {
         festivalRepository.verlaagTicketsBeschikbaar(
                 festival.getId(), boeking.getAantalTickets());
         return boekingRepository.create(boeking);
+    }
+
+    public List<BoekingOverzicht> findBoekingOverzicht() {
+        return boekingRepository.findBoekingOverzicht();
     }
 }
