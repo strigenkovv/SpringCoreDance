@@ -40,6 +40,19 @@ public class BoekingRepository {
                 .list();
     }
 
+    public List<AantalBoekingenPerFestival> findAantalBoekingenPerFestival() {
+        var sql = """
+                select f.id as festivalId, f.naam, count(b.id) as aantalBoekingen
+                from festivals f
+                left join boekingen b on b.festivalId = f.id
+                group by f.id, f.naam
+                order by f.id
+                """;
+        return jdbcClient.sql(sql)
+                .query(AantalBoekingenPerFestival.class)
+                .list();
+    }
+
     public Optional<Boeking> findAndLockById(long id) {
         var sql = """
                 select id, naam, aantalTickets, festivalId

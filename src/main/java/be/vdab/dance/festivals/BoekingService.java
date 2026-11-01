@@ -32,6 +32,10 @@ public class BoekingService {
         return boekingRepository.findBoekingOverzicht();
     }
 
+    public List<AantalBoekingenPerFestival> findAantalBoekingenPerFestival() {
+        return boekingRepository.findAantalBoekingenPerFestival();
+    }
+
     public void annuleerBoeking(long id) {
         var boeking = boekingRepository.findAndLockById(id)
                 .orElseThrow();

@@ -1,5 +1,7 @@
-package be.vdab.dance.festivals;
+package be.vdab.dance;
 
+import be.vdab.dance.festivals.Boeking;
+import be.vdab.dance.festivals.BoekingService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +33,7 @@ public class MyRunner implements CommandLineRunner {
         }
 
         annuleerBoeking(scanner);
+        toonAantalBoekingenPerFestival();
     }
 
     private void maakBoeking(Scanner scanner) {
@@ -65,5 +68,14 @@ public class MyRunner implements CommandLineRunner {
         var boekingId = scanner.nextLong();
         boekingService.annuleerBoeking(boekingId);
         System.out.println("Boeking geannuleerd.");
+    }
+
+    private void toonAantalBoekingenPerFestival() {
+        System.out.println("Aantal boekingen per festival:");
+        boekingService.findAantalBoekingenPerFestival()
+                .forEach(festival -> System.out.println(
+                        festival.festivalId() + ": "
+                                + festival.naam() + ": "
+                                + festival.aantalBoekingen()));
     }
 }

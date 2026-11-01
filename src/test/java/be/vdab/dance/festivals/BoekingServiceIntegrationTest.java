@@ -75,6 +75,31 @@ class BoekingServiceIntegrationTest {
                 jdbcClient, BOEKINGEN_TABLE, "id=" + boekingId)).isZero();
     }
 
+    @Test
+    void findAantalBoekingenPerFestivalGeeftDeJuisteAantallen() {
+        var rockWerchterId = idVanFestival("Rock Werchter");
+        var tomorrowlandId = idVanFestival("Tomorrowland");
+        boekingService.create(new Boeking(0, "Statistiek 1", 1, rockWerchterId));
+        boekingService.create(new Boeking(0, "Statistiek 2", 1, rockWerchterId));
+        boekingService.create(new Boeking(0, "Statistiek 3", 1, tomorrowlandId));
+
+        var statistiek = boekingService.findAantalBoekingenPerFestival();
+
+        assertThat(statistiek)
+                .extracting(AantalBoekingenPerFestival::festivalId)
+                .isSorted();
+        assertThat(statistiek).anySatisfy(eenFestival -> {
+            assertThat(eenFestival.festivalId()).isEqualTo(rockWerchterId);
+            assertThat(eenFestival.naam()).isEqualTo("Rock Werchter");
+            assertThat(eenFestival.aantalBoekingen()).isEqualTo(2);
+        });
+        assertThat(statistiek).anySatisfy(eenFestival -> {
+            assertThat(eenFestival.festivalId()).isEqualTo(tomorrowlandId);
+            assertThat(eenFestival.naam()).isEqualTo("Tomorrowland");
+            assertThat(eenFestival.aantalBoekingen()).isEqualTo(1);
+        });
+    }
+
     private long idVanFestival(String naam) {
         return jdbcClient.sql("select id from festivals where naam = ?")
                 .param(naam)
