@@ -7,20 +7,19 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.context.jdbc.Sql;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import java.math.BigDecimal;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTableWhere;
 
 @JdbcTest
 @Import({FestivalRepository.class, FestivalService.class})
 @Sql("/festivals.sql")
-class FestivalServiceTest {
+class FestivalServiceIntegrationTest {
     private static final String FESTIVALS_TABLE = "festivals";
 
     private final FestivalService festivalService;
     private final JdbcClient jdbcClient;
 
-    FestivalServiceTest(FestivalService festivalService, JdbcClient jdbcClient) {
+    FestivalServiceIntegrationTest(FestivalService festivalService, JdbcClient jdbcClient) {
         this.festivalService = festivalService;
         this.jdbcClient = jdbcClient;
     }
@@ -49,6 +48,18 @@ class FestivalServiceTest {
         assertThat(festivals)
                 .extracting(FestivalMetReclameBudget::reclameBudget)
                 .containsExactly(BigDecimal.valueOf(2000), BigDecimal.valueOf(5000));
+    }
+
+    @Test
+    void findMetNaamGeeftFestivalsMetDeelVanDeNaam() {
+        var festivals = festivalService.findMetNaam("rock");
+
+        assertThat(festivals)
+                .singleElement()
+                .satisfies(festival -> {
+                    assertThat(festival.id()).isEqualTo(idVanFestival("Rock Werchter"));
+                    assertThat(festival.naam()).isEqualTo("Rock Werchter");
+                });
     }
 
     private long idVanFestival(String naam) {

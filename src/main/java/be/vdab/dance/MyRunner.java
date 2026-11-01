@@ -37,6 +37,7 @@ public class MyRunner implements CommandLineRunner {
         annuleerBoeking(scanner);
         toonAantalBoekingenPerFestival();
         toonFestivalsMetReclameBudget(scanner);
+        toonFestivalsMetDeelVanNaam(scanner);
     }
 
     private void maakBoeking(Scanner scanner) {
@@ -85,8 +86,17 @@ public class MyRunner implements CommandLineRunner {
     private void toonFestivalsMetReclameBudget(Scanner scanner) {
         System.out.print("Geef een minimum reclamebudget: ");
         var vanaf = scanner.nextBigDecimal();
+        scanner.nextLine();
         festivalService.findMetReclameBudgetVanaf(vanaf)
                 .forEach(festival -> System.out.println(
                         festival.naam() + ": " + festival.reclameBudget() + "€"));
+    }
+
+    private void toonFestivalsMetDeelVanNaam(Scanner scanner) {
+        System.out.print("Geef een deel van de festivalnaam: ");
+        var tekst = scanner.nextLine();
+        festivalService.findMetNaam(tekst)
+                .forEach(festival -> System.out.println(
+                        festival.id() + ": " + festival.naam()));
     }
 }

@@ -28,6 +28,10 @@ public class FestivalService {
         return festivalRepository.findMetReclameBudgetVanaf(vanaf);
     }
 
+    public List<FestivalIdNaam> findMetNaam(String tekst) {
+        return festivalRepository.findMetNaam(tekst);
+    }
+
     public void delete(long id) {
         festivalRepository.delete(id);
     }

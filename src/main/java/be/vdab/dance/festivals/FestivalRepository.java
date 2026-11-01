@@ -53,6 +53,19 @@ public class FestivalRepository {
                 .list();
     }
 
+    public List<FestivalIdNaam> findMetNaam(String tekst) {
+        var sql = """
+                select id, naam
+                from festivals
+                where naam like ?
+                order by naam
+                """;
+        return jdbcClient.sql(sql)
+                .param("%" + tekst + "%")
+                .query(FestivalIdNaam.class)
+                .list();
+    }
+
     public Optional<Festival> findAndLockById(long id) {
         var sql = """
                 select id, naam, ticketsBeschikbaar, reclameBudget
