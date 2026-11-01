@@ -2,18 +2,20 @@ package be.vdab.dance;
 
 import be.vdab.dance.festivals.Boeking;
 import be.vdab.dance.festivals.BoekingService;
+import be.vdab.dance.festivals.FestivalService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
+import java.math.BigDecimal;
 
 @Component
 public class MyRunner implements CommandLineRunner {
-    // private final FestivalService festivalService;
+    private final FestivalService festivalService;
     private final BoekingService boekingService;
 
-    public MyRunner(BoekingService boekingService) {
-        // this.festivalService = festivalService;
+    public MyRunner(FestivalService festivalService, BoekingService boekingService) {
+        this.festivalService = festivalService;
         this.boekingService = boekingService;
     }
 
@@ -34,6 +36,7 @@ public class MyRunner implements CommandLineRunner {
 
         annuleerBoeking(scanner);
         toonAantalBoekingenPerFestival();
+        toonFestivalsMetReclameBudget(scanner);
     }
 
     private void maakBoeking(Scanner scanner) {
@@ -77,5 +80,13 @@ public class MyRunner implements CommandLineRunner {
                         festival.festivalId() + ": "
                                 + festival.naam() + ": "
                                 + festival.aantalBoekingen()));
+    }
+
+    private void toonFestivalsMetReclameBudget(Scanner scanner) {
+        System.out.print("Geef een minimum reclamebudget: ");
+        var vanaf = scanner.nextBigDecimal();
+        festivalService.findMetReclameBudgetVanaf(vanaf)
+                .forEach(festival -> System.out.println(
+                        festival.naam() + ": " + festival.reclameBudget() + "€"));
     }
 }

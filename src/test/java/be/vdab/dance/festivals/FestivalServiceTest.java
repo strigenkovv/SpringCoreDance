@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.math.BigDecimal;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import java.math.BigDecimal;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTableWhere;
 
 @JdbcTest
@@ -37,6 +37,18 @@ class FestivalServiceTest {
                 .isEqualByComparingTo("3500");
         assertThat(reclameBudgetVanFestival("Pukkelpop"))
                 .isEqualByComparingTo("4500");
+    }
+
+    @Test
+    void findMetReclameBudgetVanafGeeftGesorteerdeFestivals() {
+        var festivals = festivalService.findMetReclameBudgetVanaf(BigDecimal.valueOf(2000));
+
+        assertThat(festivals)
+                .extracting(FestivalMetReclameBudget::naam)
+                .containsExactly("Pukkelpop", "Tomorrowland");
+        assertThat(festivals)
+                .extracting(FestivalMetReclameBudget::reclameBudget)
+                .containsExactly(BigDecimal.valueOf(2000), BigDecimal.valueOf(5000));
     }
 
     private long idVanFestival(String naam) {

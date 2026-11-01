@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.math.BigDecimal;
 
 @Service
 @Transactional
@@ -21,6 +22,10 @@ public class FestivalService {
 
     public List<Festival> findUitverkocht() {
         return festivalRepository.findUitverkocht();
+    }
+
+    public List<FestivalMetReclameBudget> findMetReclameBudgetVanaf(BigDecimal vanaf) {
+        return festivalRepository.findMetReclameBudgetVanaf(vanaf);
     }
 
     public void delete(long id) {

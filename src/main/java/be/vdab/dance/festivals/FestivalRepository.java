@@ -40,6 +40,19 @@ public class FestivalRepository {
                 .list();
     }
 
+    public List<FestivalMetReclameBudget> findMetReclameBudgetVanaf(BigDecimal vanaf) {
+        var sql = """
+                select naam, reclameBudget
+                from festivals
+                where reclameBudget >= ?
+                order by reclameBudget
+                """;
+        return jdbcClient.sql(sql)
+                .param(vanaf)
+                .query(FestivalMetReclameBudget.class)
+                .list();
+    }
+
     public Optional<Festival> findAndLockById(long id) {
         var sql = """
                 select id, naam, ticketsBeschikbaar, reclameBudget
