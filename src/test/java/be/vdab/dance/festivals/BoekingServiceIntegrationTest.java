@@ -78,10 +78,10 @@ class BoekingServiceIntegrationTest {
     @Test
     void findAantalBoekingenPerFestivalGeeftDeJuisteAantallen() {
         var rockWerchterId = idVanFestival("Rock Werchter");
-        var tomorrowlandId = idVanFestival("Tomorrowland");
+        var pukkelpopId = idVanFestival("Pukkelpop");
         boekingService.create(new Boeking(0, "Statistiek 1", 1, rockWerchterId));
         boekingService.create(new Boeking(0, "Statistiek 2", 1, rockWerchterId));
-        boekingService.create(new Boeking(0, "Statistiek 3", 1, tomorrowlandId));
+        boekingService.create(new Boeking(0, "Statistiek 3", 1, pukkelpopId));
 
         var statistiek = boekingService.findAantalBoekingenPerFestival();
 
@@ -94,8 +94,8 @@ class BoekingServiceIntegrationTest {
             assertThat(eenFestival.aantalBoekingen()).isEqualTo(2);
         });
         assertThat(statistiek).anySatisfy(eenFestival -> {
-            assertThat(eenFestival.festivalId()).isEqualTo(tomorrowlandId);
-            assertThat(eenFestival.naam()).isEqualTo("Tomorrowland");
+            assertThat(eenFestival.festivalId()).isEqualTo(pukkelpopId);
+            assertThat(eenFestival.naam()).isEqualTo("Pukkelpop");
             assertThat(eenFestival.aantalBoekingen()).isEqualTo(1);
         });
     }
