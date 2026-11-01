@@ -29,6 +29,8 @@ public class MyRunner implements CommandLineRunner {
         if (scanner.nextLine().equalsIgnoreCase("j")) {
             toonBoekingOverzicht();
         }
+
+        annuleerBoeking(scanner);
     }
 
     private void maakBoeking(Scanner scanner) {
@@ -56,5 +58,12 @@ public class MyRunner implements CommandLineRunner {
                                 + boeking.naam() + ": "
                                 + boeking.festivalNaam() + ": "
                                 + boeking.aantalTickets()));
+    }
+
+    private void annuleerBoeking(Scanner scanner) {
+        System.out.print("Geef het id van de te annuleren boeking: ");
+        var boekingId = scanner.nextLong();
+        boekingService.annuleerBoeking(boekingId);
+        System.out.println("Boeking geannuleerd.");
     }
 }

@@ -62,6 +62,19 @@ class BoekingServiceIntegrationTest {
                 });
     }
 
+    @Test
+    void annuleerBoekingVerwijdertBoekingEnGeeftTicketsTerug() {
+        var festivalId = idVanFestival("Rock Werchter");
+        var boekingId = boekingService.create(
+                new Boeking(0, "Test Annulering", 3, festivalId));
+
+        boekingService.annuleerBoeking(boekingId);
+
+        assertThat(ticketsVanFestival(festivalId)).isEqualTo(100);
+        assertThat(countRowsInTableWhere(
+                jdbcClient, BOEKINGEN_TABLE, "id=" + boekingId)).isZero();
+    }
+
     private long idVanFestival(String naam) {
         return jdbcClient.sql("select id from festivals where naam = ?")
                 .param(naam)

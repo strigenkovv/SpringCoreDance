@@ -31,4 +31,12 @@ public class BoekingService {
     public List<BoekingOverzicht> findBoekingOverzicht() {
         return boekingRepository.findBoekingOverzicht();
     }
+
+    public void annuleerBoeking(long id) {
+        var boeking = boekingRepository.findAndLockById(id)
+                .orElseThrow();
+        festivalRepository.verhoogTicketsBeschikbaar(
+                boeking.getFestivalId(), boeking.getAantalTickets());
+        boekingRepository.delete(id);
+    }
 }

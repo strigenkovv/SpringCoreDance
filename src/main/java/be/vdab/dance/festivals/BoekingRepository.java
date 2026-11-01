@@ -6,6 +6,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class BoekingRepository {
@@ -37,5 +38,28 @@ public class BoekingRepository {
         return jdbcClient.sql(sql)
                 .query(BoekingOverzicht.class)
                 .list();
+    }
+
+    public Optional<Boeking> findAndLockById(long id) {
+        var sql = """
+                select id, naam, aantalTickets, festivalId
+                from boekingen
+                where id = ?
+                for update
+                """;
+        return jdbcClient.sql(sql)
+                .param(id)
+                .query(Boeking.class)
+                .optional();
+    }
+
+    public void delete(long id) {
+        var sql = """
+                delete from boekingen
+                where id = ?
+                """;
+        jdbcClient.sql(sql)
+                .param(id)
+                .update();
     }
 }
